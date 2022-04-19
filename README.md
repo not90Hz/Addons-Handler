@@ -1,2 +1,2 @@
 # Addons-Handler
-A script for VRCSDK 3.0 avatar and world addons.
+A Unity EditorWindow to handle VRCSDK 3.0 (Avatar and World) addons.
