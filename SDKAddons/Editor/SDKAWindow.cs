@@ -274,7 +274,7 @@ Please change to expert to go on!"
             {
                 if (GUILayout.Button("Update"))
                 {
-                    Application.OpenURL("https://github.com/not90Hz/Addons-Handler/releases/latest/downloads/AddonsHandler.unitypackage");
+                    Application.OpenURL("https://github.com/not90Hz/Addons-Handler/releases/latest/downloads/Addons-Handler.unitypackage");
                 }
             }
         }
