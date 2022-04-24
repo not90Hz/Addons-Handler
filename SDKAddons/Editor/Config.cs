@@ -2,7 +2,7 @@
 {
     public class Config
     {
-        public static string[] Experience = new string[] { "New User", "Expert" };
+        public static string[] Experience = new string[] { "Easy", "Advanced" };
         public static int ExpIndex = 0;
 
         public static string[] Imports = new string[] { "Avatar", "World" };
@@ -26,7 +26,7 @@
         public static string[] WToolsList;
 
         public static string Latest { get; set; }
-        public static string Current { get { return "1"; } }
+        public static string Current { get { return "2"; } }
 
         public static bool Sel { get; set; }
         public static bool Inf { get; set; }

@@ -6,6 +6,7 @@ using UnityEditor;
 using System.IO;
 using System;
 using System.Net;
+using Microsoft.Win32;
 
 namespace SDKAddons
 {
@@ -15,7 +16,7 @@ namespace SDKAddons
 
         public static List<ButtonAPI> ImportButtonContent = new List<ButtonAPI>();
 
-        [MenuItem("VRChat SDK/Tools/SDK Addons")]
+        [MenuItem("VRChat SDK/SDK Addons")]
         static void Init()
         {
             Vector2 minSize = new Vector2(Config.WindowMinSize[0], Config.WindowMinSize[1]);
@@ -36,7 +37,7 @@ namespace SDKAddons
 
         void OnEnable()
         {
-            if(Directory.Exists(Directory.GetCurrentDirectory() + "/Assets/Udon"))
+            if (Directory.Exists(Directory.GetCurrentDirectory() + "/Assets/Udon"))
             {
                 Config.IsVRC3UdonWorld = true;
                 Config.IsVRC3Avatar = false;
@@ -151,7 +152,7 @@ namespace SDKAddons
 
         void Selection()
         {
-            Config.ExpIndex = EditorGUILayout.Popup("Your Experience Mode:", Config.ExpIndex, Config.Experience);
+            Config.ExpIndex = EditorGUILayout.Popup("Editor Mode:", Config.ExpIndex, Config.Experience);
             GUILayout.BeginVertical(GUI.skin.box);
             switch (Config.ExpIndex)
             {
@@ -206,19 +207,31 @@ Please change to expert to go on!"
                         {
                             try
                             {
-                                using (var client = new WebClient())
+                                if (!button.Name.Contains("VRCSDK3-WORLD") && !button.Name.Contains("VRCSDK3-AVATAR"))
                                 {
-                                    Debug.Log(button.Link);
-                                    Debug.Log(Config.InstallPath + button.Name + ".unitypackage");
-                                    client.DownloadFile(button.Link + Config.repoDL + button.Name + ".unitypackage", Config.InstallPath + button.Name + ".unitypackage");
+                                    using (var client = new WebClient())
+                                    {
+                                        client.DownloadFile(button.Link + Config.repoDL + button.Name + ".unitypackage", Config.InstallPath + button.Name + ".unitypackage");
+                                    }
+                                }
+                                else
+                                {
+                                    Application.OpenURL(button.Link + button.Name + ".unitypackage");
+                                    string downloads = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", String.Empty).ToString();
+                                    if (File.Exists(downloads + string.Format("/{0}.unitypackage", button.Name)))
+                                    {
+                                        File.Move(downloads + string.Format("/{0}.unitypackage", button.Name), string.Format("{0}{1}.unitypackage", Config.InstallPath, button.Name));
+                                    } 
                                 }
                             }
                             catch { }
                             finally
                             {
-                                button.Installed = true;
-                                AssetDatabase.ImportPackage(string.Format("{0}{1}.unitypackage", Config.InstallPath, button.Name), true);
-                                AssetDatabase.Refresh();
+                                if(File.Exists(string.Format("{0}{1}.unitypackage", Config.InstallPath, button.Name))){
+                                    button.Installed = true;
+                                    AssetDatabase.ImportPackage(string.Format("{0}{1}.unitypackage", Config.InstallPath, button.Name), true);
+                                    AssetDatabase.Refresh();
+                                }
                             }
                         }
                         else
@@ -254,13 +267,26 @@ Please change to expert to go on!"
                 string[] text = item.Split('|');
                 if (Avatar)
                 {
-                    ImportButtonContent.Add(new ButtonAPI(text[0], text[1], WebTool.ReadTextFromUrl(Config.mainlink + "Avatar/" + text[0] + ".html"), "Avatar", File.Exists(Config.InstallPath + string.Format("{0}.unitypackage", text[0]))));
+                    if (text[0].Contains("VRCSDK3-AVATAR"))
+                    {
+                        ImportButtonContent.Add(new ButtonAPI(text[0], text[1], "https://docs.vrchat.com/docs/setting-up-the-sdk", "Avatar", File.Exists(Config.InstallPath + string.Format("{0}.unitypackage", text[0]))));
+                    }
+                    else
+                    {
+                        ImportButtonContent.Add(new ButtonAPI(text[0], text[1], WebTool.ReadTextFromUrl(Config.mainlink + "Avatar/" + text[0] + ".html"), "Avatar", File.Exists(Config.InstallPath + string.Format("{0}.unitypackage", text[0]))));
+                    }
                 }
                 else
                 {
-                    ImportButtonContent.Add(new ButtonAPI(text[0], text[1], WebTool.ReadTextFromUrl(Config.mainlink + "World/" + text[0] + ".html"), "World", File.Exists(Config.InstallPath + string.Format("{0}.unitypackage", text[0]))));
+                    if (text[0].Contains("VRCSDK3-WORLD"))
+                    {
+                        ImportButtonContent.Add(new ButtonAPI(text[0], text[1], "https://docs.vrchat.com/docs/setting-up-the-sdk", "World", File.Exists(Config.InstallPath + string.Format("{0}.unitypackage", text[0]))));
+                    }
+                    else
+                    {
+                        ImportButtonContent.Add(new ButtonAPI(text[0], text[1], WebTool.ReadTextFromUrl(Config.mainlink + "World/" + text[0] + ".html"), "World", File.Exists(Config.InstallPath + string.Format("{0}.unitypackage", text[0]))));
+                    }
                 }
-                
             }
         }
 
@@ -274,7 +300,7 @@ Please change to expert to go on!"
             {
                 if (GUILayout.Button("Update"))
                 {
-                    Application.OpenURL("https://github.com/not90Hz/Addons-Handler/releases/latest/downloads/Addons-Handler.unitypackage");
+                    Application.OpenURL("https://github.com/not90Hz/Addons-Handler/releases/download/Addons-Handler.unitypackage");
                 }
             }
         }
