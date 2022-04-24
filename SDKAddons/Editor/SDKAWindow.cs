@@ -174,7 +174,7 @@ namespace SDKAddons
             if (Config.IsVRC3UdonWorld) GenerateButtons("World");
             if (!Config.IsVRC3Avatar && !Config.IsVRC3UdonWorld) GUILayout.Label(
                 @"There is no SDK Loaded!
-Please change to expert to go on!"
+Please change the editor mode to 'Advanced' to continue!"
                 );
         }
 
