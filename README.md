@@ -1,6 +1,8 @@
 # Addons-Handler
 A Unity EditorWindow to handle VRCSDK 3.0 (Avatar and World) addons, tools and scripts.
 
+![Discord Shield](https://discordapp.com/api/guilds/946843158497603615/widget.png?style=shield)
+
 ## How to
 It is very easy to use.
 
